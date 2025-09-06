@@ -55,8 +55,6 @@ function compileFile(filePath, outputPath = null) {
       code: code
     });
     
-    // Get the compiled output from the instance
-    console.log(compilerInstance);
     const compiledCode = compilerInstance.out;
     
     if (!outputPath) {
