@@ -1,0 +1,32 @@
+{
+  "name": "osl-lang",
+  "version": "1.0.0",
+  "description": "OSL (Origin Scripting Language) compiler and runtime",
+  "main": "modules/compiler.mjs",
+  "type": "module",
+  "bin": {
+    "osl": "./bin/osl.mjs"
+  },
+  "scripts": {
+    "install-global": "npm install -g .",
+    "test": "node main.mjs"
+  },
+  "keywords": [
+    "osl",
+    "scripting",
+    "language",
+    "compiler",
+    "origin"
+  ],
+  "author": "Mistium",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mistium/OSL.js.git"
+  },
+  "homepage": "https://origin.mistium.com",
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
