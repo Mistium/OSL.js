@@ -21,10 +21,10 @@ Usage:
 Commands:
   compile <file.osl>    Compile OSL file to JavaScript
   run <file.osl>        Compile and run OSL file
-  origin               Open Origin website (https://origin.mistium.com)
-  update               Update OSL.js from GitHub repository
-  help                 Show this help message
-  version              Show version information
+  origin                Open Origin website (https://origin.mistium.com)
+  update                Update OSL.js from GitHub repository
+  help                  Show this help message
+  version               Show version information
 
 Examples:
   osl compile script.osl       # Compiles script.osl to script.js
@@ -56,6 +56,7 @@ function compileFile(filePath, outputPath = null) {
     });
     
     // Get the compiled output from the instance
+    console.log(compilerInstance);
     const compiledCode = compilerInstance.out;
     
     if (!outputPath) {

@@ -1,4 +1,6 @@
 import { OSLUtils } from '../external/ASTgen.js';
+import { minify_sync } from "terser";
+
 const utils = new OSLUtils();
 
 class compiler {
@@ -11,30 +13,33 @@ class compiler {
 
   setupMethods() {
     this.prepend = `function getOSLType(val) { if (val === null || val === undefined) return null; else if (Array.isArray(val)) return "array"; return typeof val }
-    Object.clone=function(e){try{if(null===e)return null;if("object"==typeof e){if(Array.isArray(e))return e.map((e=>Object.clone(e)));if(e instanceof RegExp)return new RegExp(e);{let n={};for(let r in e)e.hasOwnProperty(r)&&(n[r]=Object.clone(e[r]));return n}}return e}catch{return JSON.parse(JSON.stringify(e))}};
-    Object.merge=function(t,r){if(o === null||r===null)return null;function o(t){return t&&"object"==typeof t&&!Array.isArray(t)}const e={};for(const r in t)Object.prototype.hasOwnProperty.call(t,r)&&(e[r]=t[r]);const c=[{target:e,source:r}];for(;c.length;){const{target:t,source:r}=c.pop();for(const e in r)if(Object.prototype.hasOwnProperty.call(r,e)){const n=r[e];o(n)?(o(t[e])||(t[e]={}),c.push({target:t[e],source:n})):t[e]=n}}return e};
-    Number.isPrime = function(n) { if (n <= 1) return false; if (n <= 3) return true; if (n % 2 === 0 || n % 3 === 0) return false; for (let i = 5; i * i <= n; i += 6) { if (n % i === 0 || n % (i + 2) === 0) return false; } return true; };
-    function osl_maths(left, operator, right) {
-      const tleft = typeof left
-      const tright = typeof right
-      if (tleft === "number" && tright === "number") { switch(operator) { case "+": return left + right; case "-": return left - right; case "*": return left * right; case "/": return left / right; case "%": return left % right; case "^": return left ** right; case "++": return \`\${left}\${right}\`; } }
-      else if (tleft === "string" || tright === "string") { switch(operator) { case "+": return \`\${left} \${right}\`; case "-": return String(left).replaceAll(String(right), ""); case "++": return \`\${left}\${right}\`; } }
-      switch(operator) {
-        case '+': return (+left || 0) + (+right || 0);
-        case '-': return (+left || 0) - (+right || 0);
-        case '*': return (+left || 0) * (+right || 0);
-        case '/': return (+left || 0) / (+right || 0);
-        case '%': return (+left || 0) % (+right || 0);
-        case '++': if (tleft === "object" && tright === "object") { if (Array.isArray(left) && Array.isArray(right)) return left.concat(right); else return Object.merge(left,right); } return \`\${left}\${right}\`;
-        case '??': return left ?? right;
-        case 'to': return Array.from({ length: Math.abs(right - left) + 1 }, (_, i) => (left < right ? left + i : left - i))
-        default: throw new Error('Unknown math operator: ' + operator);
-      }
-    }
-    function setVar(name, value) { name = \`\${name}\`; if (inner[name] !== undefined) inner[name] = value; else scope[name.toLowerCase()] = value; }
-    function getVar(name) { name = \`\${name}\`; if (inner[name] !== undefined) return inner[name]; return scope[name.toLowerCase()]; }
-    const scope = {};
-    let inner = scope;\n`;
+const clone=function(e){try{if(null===e)return null;if("object"==typeof e){if(Array.isArray(e))return e.map((e=>clone(e)));if(e instanceof RegExp)return new RegExp(e);{let n={};for(let r in e)e.hasOwnProperty(r)&&(n[r]=clone(e[r]));return n}}return e}catch{return JSON.parse(JSON.stringify(e))}};
+const merge=function(t,r){if(o === null||r===null)return null;function o(t){return t&&"object"==typeof t&&!Array.isArray(t)}const e={};for(const r in t)Object.prototype.hasOwnProperty.call(t,r)&&(e[r]=t[r]);const c=[{target:e,source:r}];for(;c.length;){const{target:t,source:r}=c.pop();for(const e in r)if(Object.prototype.hasOwnProperty.call(r,e)){const n=r[e];o(n)?(o(t[e])||(t[e]={}),c.push({target:t[e],source:n})):t[e]=n}}return e};
+const isPrime = function(n) { if (n <= 1) return false; if (n <= 3) return true; if (n % 2 === 0 || n % 3 === 0) return false; for (let i = 5; i * i <= n; i += 6) { if (n % i === 0 || n % (i + 2) === 0) return false; } return true; };
+function osl_maths(left, operator, right) {
+  const tleft = typeof left
+  const tright = typeof right
+  if (tleft === "number" && tright === "number") { switch(operator) { case "+": return left + right; case "-": return left - right; case "*": return left * right; case "/": return left / right; case "%": return left % right; case "^": return left ** right; case "++": return \`\${left}\${right}\`; } }
+  else if (tleft === "string" || tright === "string") { switch(operator) { case "+": return \`\${left} \${right}\`; case "-": return String(left).replaceAll(String(right), ""); case "++": return \`\${left}\${right}\`; } }
+  switch(operator) {
+    case '+': return (+left || 0) + (+right || 0);
+    case '-': return (+left || 0) - (+right || 0);
+    case '*': return (+left || 0) * (+right || 0);
+    case '/': return (+left || 0) / (+right || 0);
+    case '%': return (+left || 0) % (+right || 0);
+    case '++': if (tleft === "object" && tright === "object") { if (Array.isArray(left) && Array.isArray(right)) return left.concat(right); else return Object.merge(left,right); } return \`\${left}\${right}\`;
+    case '??': return left ?? right;
+    case 'to': return Array.from({ length: Math.abs(right - left) + 1 }, (_, i) => (left < right ? left + i : left - i))
+    default: throw new Error('Unknown math operator: ' + operator);
+  }
+}
+function setVar(name, value) { name = \`\${name}\`; if (inner[name] !== undefined) inner[name] = value; else scope[name.toLowerCase()] = value; }
+function getVar(name) { name = \`\${name}\`; if (inner[name] !== undefined) return inner[name]; return scope[name.toLowerCase()]; }
+const scope = {};
+let inner = scope;
+const reverse = (r) => Array.isArray(r)?r.slice().reverse():String(r).split("").reverse().join("")
+const getCtx = (name) => Object.hasOwn(inner, name) ? inner : scope;
+`;
   }
 
   compile(options) {
@@ -44,7 +49,7 @@ class compiler {
       out += this.compileLine(ast[i]);
     }
     out = `${this.prepend}${out}`;
-    this.out = out;
+    this.out = minify_sync(out).code;
     this.fn = new Function('DATA', out);
     switch (options.output) {
       case 'none': return null;
@@ -169,15 +174,15 @@ class compiler {
 
     } else {
       name = `${node.left.data}`
-      out += `{const n="${name}"; let ctx = Object.hasOwn(inner, n) ? inner : scope; `
+      out += `{const n="${name}";`
     }
     switch (node.data) {
-      case '=': out += `ctx[n] = Object.clone(${value})}`; break
-      case '@=': out += `ctx[n] = ${value}}`; break
-      case '++': out += `ctx[n] = (+ctx[n] || 0) + 1}`; break
-      case '--': out += `ctx[n] = (+ctx[n] || 0) - 1}`; break
-      case '=??': out += `{ const val = ${value}; if ((val ?? "") !== "") { ctx[n] = (typeof val === "object" && val !== null) ? Object.clone(val) : val; } }}`; break
-      default: out += `ctx[n] = osl_maths(ctx[n], "${node.data.slice(0, -1)}", ${value})}`
+      case '=': out += `getCtx(n)[n]=clone(${value})}`; break
+      case '@=': out += `getCtx(n)[n]=${value}}`; break
+      case '++': out += `const ctx=getCtx(n);ctx[n]=(+ctx[n] || 0) + 1}`; break
+      case '--': out += `const ctx=getCtx(n);ctx[n]=(+ctx[n] || 0) - 1}`; break
+      case '=??': out += `{const val=${value};if ((val??"")!==""){getCtx(n)[n]=((typeof val)==="object"&&val!==null)?clone(val):val;}}}`; break
+      default: out += `const ctx=getCtx(n);ctx[n]=osl_maths(ctx[n], "${node.data.slice(0, -1)}", ${value})}`
     }
     return out
   }
@@ -260,7 +265,7 @@ class compiler {
             result = `(${result} < 0 ? "-" : "+")`;
             break;
           case 'isPrime':
-            result = `Number.isPrime(${result})`;
+            result = `isPrime(${result})`;
             break;
           case 'newString':
             result = `" ".repeat(${result})`;
@@ -347,8 +352,7 @@ class compiler {
             result = `${result}.toLowerCase()`;
             break;
           case 'reverse':
-            // For arrays: use slice().reverse(), for strings: split/reverse/join
-            result = `(Array.isArray(${result}) ? ${result}.slice().reverse() : String(${result}).split("").reverse().join(""))`;
+            result = `reverse(${result})`;
             break;
           case 'hashMD5':
             result = `md5(String(${result}))`;
@@ -396,7 +400,7 @@ class compiler {
             result = `Object.seal(${result})`;
             break;
           case 'clone':
-            result = `Object.clone(${result})`;
+            result = `clone(${result})`;
             break;
           case 'sort':
             result = `${result}.slice().sort()`;
@@ -418,7 +422,7 @@ class compiler {
           // Object methods
           case 'bind':
             if (params.length > 0) {
-              result = `{ const obj = Object.clone(${result}); obj._self = ${params[0]}; return obj }`;
+              result = `{ const obj = clone(${result}); obj._self = ${params[0]}; return obj }`;
             }
             break;
           case 'isDef':
