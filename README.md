@@ -1,15 +1,6 @@
 # OSL.js - Origin Scripting Language
 
-OSL.js is a compiler and runtime for the Origin Scripting Language (OSL), a powerful and intuitive scripting language with modern features.
-
-## Features
-
-- 🚀 Fast compilation to JavaScript
-- 🔧 Rich built-in methods for strings, arrays, and numbers
-- 📦 Easy CLI installation and usage
-- 🌐 Integration with Origin platform
-- ⚡ Auto-assignment operators for method chaining
-- 🧮 Advanced math operations and functions
+OSL.js is a compiler and runtime for the Origin Scripting Language (OSL)
 
 ## Quick Start
 
@@ -200,9 +191,8 @@ Check out `example.osl` for a comprehensive example showcasing various OSL featu
 
 ## Links
 
-- 🌐 **Origin Platform**: https://origin.mistium.com
-- 📁 **GitHub Repository**: https://github.com/Mistium/OSL.js
-- 📖 **Documentation**: Available on Origin platform
+- 📁 **GitHub Repository**: https://github.com/originOSL/OSL.js
+- 📖 **Documentation**: https://osl.mistium.com
 
 ## License
 
